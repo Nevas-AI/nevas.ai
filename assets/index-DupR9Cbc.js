@@ -65460,8 +65460,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
       ml: { default: mn.ML_B, hover: mn.ML_W },
       nlp: { default: mn.NLP_B, hover: mn.NLP_W },
       vision: {
-        default: "/public/assets/vision.png",
-        hover: "/public/assets/computer_vision.png",
+        default: "/assets/vision.png",
+        hover: "/assets/computer_vision.png",
       },
       genai: { default: mn.GenerativeAI_B, hover: mn.GenerativeAI_W },
       rl: {
