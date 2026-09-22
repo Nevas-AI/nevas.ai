@@ -54601,11 +54601,6 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                   className: "hover:opacity-70",
                   children: "Contact Us",
                 }),
-                N.jsx("button", {
-                  className: `w-fit border-b border-black
-            tracking-[0.25em] pb-1`,
-                  children: "Book a Meeting",
-                }),
               ],
             }),
           }),
