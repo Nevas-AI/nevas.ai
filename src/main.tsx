@@ -500,45 +500,71 @@ const injectBlogSection = async () => {
 
 const patchAgencyVideo = () => {
 	const heading = Array.from(document.querySelectorAll("h2")).find(
-		(element) =>
-			normalizeLabel(element.textContent).replace(/\s+/g, " ") ===
-			"there are so many digital marketing agencies out",
+		(el) =>
+			normalizeLabel(el.textContent).includes("agencies out"),
 	);
 	if (!heading) return;
 
 	let carouselRoot: HTMLElement | null = heading;
-	while (carouselRoot && !carouselRoot.querySelector('[class*="md:hidden"] iframe[src*="youtube.com/embed/"]')) {
+	while (
+		carouselRoot &&
+		!carouselRoot.querySelector('[class*="md:hidden"] iframe[src*="youtube.com/embed/"]')
+	) {
 		carouselRoot = carouselRoot.parentElement;
 	}
 	if (!carouselRoot) return;
 
-	const videoId = "OR_1ogQYevo";
-	const videoTitle = "How AI Will Make Your Clothes Cheaper";
-	const mobileFrame = carouselRoot.querySelector<HTMLIFrameElement>(
+	// The 5 new YouTube Shorts, in the order they should appear.
+	const videos = [
+		{ id: "vgetmcGTvhs", title: "Video 1" },
+		{ id: "hbnoTaRWdMk", title: "Video 2" },
+		{ id: "oZ-8mKL84gM", title: "Video 3" },
+		{ id: "QsHtoOUO0OU", title: "Video 4" },
+		{ id: "FDO0-XDheXU", title: "Video 5" },
+	];
+
+	// ---- Mobile carousel (hidden on md+, visible on small screens) ----
+	const mobileFrames = carouselRoot.querySelectorAll<HTMLIFrameElement>(
 		'[class*="md:hidden"] iframe[src*="youtube.com/embed/"]',
 	);
-	if (mobileFrame && !mobileFrame.src.includes(`/embed/${videoId}`)) {
-		mobileFrame.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
-		mobileFrame.title = videoTitle;
-	}
+	mobileFrames.forEach((frame, index) => {
+		const video = videos[index];
+		if (!video) return;
+		const nextSrc = `https://www.youtube.com/embed/${video.id}?rel=0`;
+		if (frame.src !== nextSrc) {
+			frame.src = nextSrc;
+			frame.title = video.title;
+		}
+	});
 
-	const desktopCard = carouselRoot.querySelector<HTMLButtonElement>(
+	// ---- Desktop accordion (visible on md+) ----
+	const desktopCards = carouselRoot.querySelectorAll<HTMLButtonElement>(
 		'[class*="md:flex"] > button',
 	);
-	if (!desktopCard) return;
+	desktopCards.forEach((card, index) => {
+		const video = videos[index];
+		if (!video) return;
 
-	const desktopFrame = desktopCard.querySelector<HTMLIFrameElement>("iframe");
-	if (desktopFrame && !desktopFrame.src.includes(`/embed/${videoId}`)) {
-		desktopFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0`;
-		desktopFrame.title = videoTitle;
-	}
+		// Replace the iframe src
+		const frame = card.querySelector<HTMLIFrameElement>("iframe");
+		if (frame) {
+			const nextSrc = `https://www.youtube.com/embed/${video.id}?autoplay=1&mute=1&rel=0`;
+			if (frame.src !== nextSrc) {
+				frame.src = nextSrc;
+				frame.title = video.title;
+			}
+		}
 
-	const thumbnail = desktopCard.querySelector<HTMLImageElement>("img");
-	const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-	if (thumbnail && thumbnail.src !== thumbnailUrl) {
-		thumbnail.src = thumbnailUrl;
-		thumbnail.alt = videoTitle;
-	}
+		// Replace the thumbnail shown for inactive cards
+		const thumb = card.querySelector<HTMLImageElement>("img");
+		if (thumb) {
+			const thumbUrl = `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+			if (thumb.src !== thumbUrl) {
+				thumb.src = thumbUrl;
+				thumb.alt = video.title;
+			}
+		}
+	});
 };
 
 const wireNavigation = () => {
