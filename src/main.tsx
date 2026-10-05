@@ -170,6 +170,70 @@ const injectBlogFooterLink = () => {
 	homeLink.insertAdjacentElement("afterend", blogLink);
 };
 
+/**
+ * Injects a YouTube icon into the footer's social-icon row, next to the
+ * existing Facebook / LinkedIn / Instagram icons.
+ */
+const injectYouTubeFooterIcon = () => {
+	if (document.querySelector("[data-injected-youtube]")) return;
+
+	const YOUTUBE_URL = "https://youtube.com/@nevasai";
+
+	const footer = document.querySelector("footer");
+	if (!footer) return;
+
+	// The footer social row has this distinctive class combo.
+	const socialRow = footer.querySelector<HTMLElement>(".flex.gap-5.text-2xl");
+	if (!socialRow) return;
+	if (socialRow.querySelector("[data-injected-youtube]")) return;
+
+	// Grab an existing anchor as a styling template.
+	const template = Array.from(
+		socialRow.querySelectorAll<HTMLAnchorElement>("a"),
+	).find((a) => /instagram|linkedin|facebook/i.test(a.href));
+	if (!template) return;
+
+	// Build the YouTube link.
+	const youtubeLink = template.cloneNode(false) as HTMLAnchorElement;
+	youtubeLink.href = YOUTUBE_URL;
+	youtubeLink.target = "_blank";
+	youtubeLink.rel = "noopener noreferrer";
+	youtubeLink.setAttribute("aria-label", "YouTube");
+	youtubeLink.setAttribute("data-injected-youtube", "true");
+
+	// Clone the SVG wrapper so size/class match, then replace its path.
+	const siblingSvg = template.querySelector("svg");
+	const newSvg = siblingSvg
+		? (siblingSvg.cloneNode(false) as SVGElement)
+		: (() => {
+				const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+				s.setAttribute("viewBox", "0 0 24 24");
+				s.setAttribute("fill", "currentColor");
+				s.setAttribute("width", "24");
+				s.setAttribute("height", "24");
+				return s;
+		  })();
+
+	newSvg.setAttribute("viewBox", "0 0 24 24");
+	if (!newSvg.getAttribute("fill") || newSvg.getAttribute("fill") === "none") {
+		newSvg.setAttribute("fill", "currentColor");
+		newSvg.removeAttribute("stroke");
+	}
+	while (newSvg.firstChild) newSvg.removeChild(newSvg.firstChild);
+
+	const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+	path.setAttribute(
+		"d",
+		"M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4L15.8 12z",
+	);
+	newSvg.appendChild(path);
+
+	youtubeLink.appendChild(newSvg);
+	socialRow.appendChild(youtubeLink);
+
+	console.info("[youtube-icon] Injected ✅");
+};
+
 const removeExpertAutomationSection = () => {
 	const heading = Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6")).find((element) =>
 		normalizeLabel(element.textContent).includes("our expert ai automation services"),
@@ -580,6 +644,7 @@ const wireNavigation = () => {
 	// Blog link injection (desktop nav + footer)
 	injectBlogNavLink();
 	injectBlogFooterLink();
+	injectYouTubeFooterIcon();
 
 	const links = Array.from(document.querySelectorAll<HTMLAnchorElement>("a"));
 	for (const link of links) {
