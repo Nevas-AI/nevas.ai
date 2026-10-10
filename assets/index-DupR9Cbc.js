@@ -54742,19 +54742,17 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                       "font-cervino text-3xl sm:text-5xl md:text-6xl font-extrabold leading-11 sm:leading-16 text-[#1C2546] text-center",
                     children: [
                       "Powering The Future Of",
-                      " ",
+                      N.jsx("br", {}),
                       N.jsx("span", {
                         className:
                           "bg-gradient-to-r from-[#4080F5] to-[#572AC2] bg-clip-text text-transparent",
-                        children: "Fashion With AI",
+                        children: "Fashion With AI & Intelligent",
                       }),
-                      " ",
-                      "&",
-                      " ",
+                      N.jsx("br", {}),
                       N.jsx("span", {
                         className:
                           "bg-gradient-to-r from-[#4080F5] to-[#572AC2] bg-clip-text text-transparent",
-                        children: "Intelligent Automation.",
+                        children: "Automation.",
                       }),
                     ],
                   }),
